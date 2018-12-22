@@ -6,6 +6,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import time
 import h5py
 from tqdm import tqdm
+import sys
 
 import simulation
 
@@ -14,8 +15,8 @@ def run():
     positions, velocities, GM = config.load(('position','velocity','gm'))
     c = simulation.constants(1, 1, 1/(2-2**(1/3)), 0.1786178958448091, -0.2123418310626054, -0.6626458266981849E-01)
     s = simulation.Simulation(positions, velocities, GM, c)
-    dt = -0.01
-    total_time = -20000
+    dt = float(sys.argv[1])
+    total_time = float(sys.argv[2])
     n_iter = int(total_time/dt)
     
     frames = np.zeros((n_iter, s.n, 3))
