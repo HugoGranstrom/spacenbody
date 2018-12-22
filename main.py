@@ -12,7 +12,7 @@ import simulation
 
 def run():
     config = simulation.ConfigLoader('config.json')
-    positions, velocities, GM = config.load(('position','velocity','gm'))
+    positions, velocities, GM = config.load('position','velocity','gm')
     c = simulation.constants(1, 1, 1/(2-2**(1/3)), 0.1786178958448091, -0.2123418310626054, -0.6626458266981849E-01)
     s = simulation.Simulation(positions, velocities, GM, c)
     dt = float(sys.argv[1])
