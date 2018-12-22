@@ -58,7 +58,7 @@ class Simulation():
     def save_positions_to_hdf5(self, filename, frames, skip_length=1):
         # save positions matrices to hdf5 file
         with h5py.File(filename, 'w') as f:
-            dset = f.create_dataset("positions", data=frames[::skip_length, ...])
+            dset = f.create_dataset("positions", data=frames[::skip_length, ...], compression="gzip")
 
 class ConfigLoader():
     def __init__(self, filename):
