@@ -69,24 +69,21 @@ class ConfigLoader():
         self.planet_params = config[0]
         self.n_planets = len(self.planet_params)
 
-    def load(self, attribute_names):
+    def load(self, *args):
         # check if multiple attributes are given
-        if isinstance(attribute_names, tuple) or isinstance(attribute_names, list):
+        if len(args) > 1:
             attributes = []
-            for attr in attribute_names:
+            for attr in args:
                 # check if attr is string, else raise error
                 if isinstance(attr, str):
                     attributes.append(self._load_attribute(attr))
                 else:
                     raise ValueError(f"attr is of type {type(attr)}, needs to be a string")
             return tuple(attributes)
-
-        # one attribute
-        elif isinstance(attribute_names, str):
-            return self._load_attribute(attribute_names)
-        # raise error if it is neither    
+        elif len(args) == 1:
+            return self._load_attribute(args)
         else:
-            raise ValueError(f"Argument is of type {type(attribute_names)}, needs to be a string or list/tuple of strings")
+            raise ValueError("No arguments where supplied, at least one is needed")
 
     def _load_attribute(self, attr):
         # one attribute
