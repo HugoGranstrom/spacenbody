@@ -34,9 +34,10 @@ class Simulation():
         self.velocities += dt * self.accelerations
         self.positions += dt * self.velocities
     
+    # not working proparly
     def Verlet_step(self, dt):
         self.positions += self.velocities * dt + self.accelerations * dt**2 / 2
-        temp_acc = self.accelerations
+        temp_acc = self.accelerations.copy()
         self.calculate_accelerations()
         self.velocities += dt/2 * (self.accelerations + temp_acc)
     
@@ -55,10 +56,21 @@ class Simulation():
         self.velocities += (1-2*self.consts.Lambda) * dt / 2 * self.accelerations
         self.positions += self.consts.Epsilon * dt * self.velocities
     
-    def save_positions_to_hdf5(self, filename, frames, skip_length=1):
+    def save_positions_to_hdf5(self, filename, frames, t_frame, skip_length=1):
         # save positions matrices to hdf5 file
         with h5py.File(filename, 'w') as f:
             dset = f.create_dataset("positions", data=frames[::skip_length, ...], compression="gzip")
+            dset_t = f.create_dataset("time", data=t_frame[::skip_length], compression="gzip")
+            dset_GM = f.create_dataset("GM", data=self.GM, compression="gzip")
+            dset_mass = f.create_dataset("mass", data=self.GM/self.consts.G, compression="gzip")
+        
+    def calculate_error(self, end_positions, calc_positions):
+        end_positions = np.array(end_positions).reshape(-1, 3)
+        calc_positions = np.array(calc_positions).reshape(-1, 3)
+        r_vectors = calc_positions - end_positions
+        individual_error = np.sqrt((r_vectors**2).sum(axis=1))
+        total_error = np.sum(individual_error)
+        return total_error, individual_error
 
 class ConfigLoader():
     def __init__(self, filename):
@@ -81,7 +93,7 @@ class ConfigLoader():
                     raise ValueError(f"attr is of type {type(attr)}, needs to be a string")
             return tuple(attributes)
         elif len(args) == 1:
-            return self._load_attribute(args)
+            return self._load_attribute(args[0])
         else:
             raise ValueError("No arguments where supplied, at least one is needed")
 
