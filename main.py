@@ -31,7 +31,7 @@ def run():
     for i in tqdm(range(n_iter)):
         if i % save_every_n_iterations == 0:
             j = int(i/save_every_n_iterations)
-            frames[j, ...] = np.concatenate((s.positions, s.velocities), axis=1)
+            frames[j, ...] = s.data
             t_frame[j] = i * effective_dt
         s.Verlet_step(dt)
     print(f"Execution Time: {time.time() - start_time} seconds")

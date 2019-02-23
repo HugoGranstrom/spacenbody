@@ -11,6 +11,11 @@ class Simulation():
         # have separate positions arrays for bodies and comets. Maybe have two loops then. 
         self.positions = np.array(positions).reshape(-1, 3)
         self.velocities = np.array(velocities).reshape(-1, 3)
+        
+        self.data = np.concatenate((self.positions, self.velocities), axis=1)
+        self.positions = self.data[..., 0:3]
+        self.velocities = self.data[..., 3:6]
+
         self.accelerations = np.zeros(self.positions.shape)
         self.GM = np.array(GM).reshape(-1, 1) # make it a column vector
         assert self.positions.shape[0] == self.velocities.shape[0] == self.accelerations.shape[0] == self.GM.shape[0]
